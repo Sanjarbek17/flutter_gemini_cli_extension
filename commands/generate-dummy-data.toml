@@ -1,0 +1,57 @@
+# This command generates dummy data for a specific page using Riverpod and a data source.
+# Usage: /generate-dummy-data
+
+description = "Generate dummy data, models, and providers for a specific Flutter page using Riverpod."
+
+args = [
+  { name = "page_path", description = "The path to the Flutter page file (e.g., lib/features/home/presentation/pages/home_page.dart)." }
+]
+
+prompt = """
+We're going to generate dummy data for a specific page in our **feature-first clean architecture**.
+
+## Process
+1.  **Analyze the Page**: Read the file at `page_path` to identify the data it needs (e.g., a list of products, user details, settings, etc.).
+2.  **Identify Feature**: Extract the feature name from the path.
+3.  **Model Generation**: 
+    - Create a `@freezed` model in `lib/features/<feature>/data/models/<model_name>_model.dart`.
+    - Ensure it has `fromJson` and `toJson`.
+4.  **Datasource Generation**:
+    - Create a mock datasource in `lib/features/<feature>/data/datasources/<feature>_mock_datasource.dart`.
+    - This datasource should return hardcoded dummy data (lists or objects) that matches the model.
+5.  **Repository Generation**:
+    - Create/Update `lib/features/<feature>/data/repositories/<feature>_repository.dart`.
+    - It should use the mock datasource.
+6.  **Provider Generation**:
+    - Create a Riverpod provider in `lib/features/<feature>/presentation/providers/<feature>_provider.dart`.
+    - Use `@riverpod` (Riverpod Generator).
+    - The provider should call the repository to get the data.
+7.  **Page Update**:
+    - Update the page at `page_path` to watch the new provider.
+    - Replace any hardcoded UI data with data from the provider (handle loading/error states).
+
+## Rules
+- Use `freezed` and `json_serializable` for models.
+- Use `riverpod_generator` for providers.
+- Follow the project's design system (AppColors, AppTextStyles, Gap, ScreenUtil).
+- Ensure all new files are placed correctly according to the feature-first architecture.
+- Use `import` statements correctly, following the project's relative path conventions or package imports as appropriate (prefer relative within the feature).
+
+## Context
+Project Structure:
+lib/
+├── app/
+├── core/
+└── features/
+    └── <feature_name>/
+        ├── data/
+        │   ├── datasources/
+        │   ├── models/
+        │   └── repositories/
+        └── presentation/
+            ├── providers/
+            ├── pages/
+            └── widgets/
+
+Start by reading the `page_path` and identifying the feature and data requirements.
+"""
