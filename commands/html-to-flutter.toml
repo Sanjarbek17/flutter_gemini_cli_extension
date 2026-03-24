@@ -3,6 +3,11 @@
 
 description = "Convert HTML code to a Flutter ConsumerWidget and place it in a specific feature."
 
+args = [
+  { name = "html_path", description = "The path to the HTML file you want to convert." },
+  { name = "query", description = "Any additional instructions or a query for the conversion." }
+]
+
 prompt = """
 We're going to convert HTML code into a Flutter component within our **feature-first clean architecture**.
 
@@ -11,10 +16,12 @@ We're going to convert HTML code into a Flutter component within our **feature-f
 2.  **Available Targets**: Present a list of existing features and the empty files (pages in `pages/` and widgets in `widgets/`) within them that were created by the initial scaffolding.
 3.  **Selection**: Ask the user to select the **Feature Name** and the **Target File** (Page or Widget) they want to populate.
 4.  **Validation**: Once the user selects, confirm the path by asking: **"You've selected <path_to_file>. Is this it?"**
-5.  **Conversion**: After confirmation, ask for the **HTML code** they want to convert.
+5.  **Input Source**: Check if `html_path` was provided as an argument. If not, ask the user for the **HTML code snippet** OR for a **file path** to an HTML file they want to convert.
+6.  **Query**: Check if `query` was provided as an argument. If not, also ask for any **additional instructions or a query** (e.g., specific widget names, layout preferences, "extract buttons", or any custom design decisions) to refine the conversion.
 
 ## Conversion Rules
 - Convert the HTML to a Flutter `ConsumerWidget` (Riverpod).
+- **Apply Query**: If the user provided specific instructions or a query, ensure the conversion strictly follows them (e.g., "Make the card rounded", "Use AppColors.primary for the header", etc.).
 - **Component Extraction**: For complex HTML, identify logical sections (e.g., a custom card, a complex header, or a specialized list item) and extract them into separate widgets within the feature's `presentation/widgets/` directory.
 - Use `flutter_screenutil` for all dimensions (e.g., `10.w`, `20.h`, `16.sp`).
 - Follow the project's design system:
