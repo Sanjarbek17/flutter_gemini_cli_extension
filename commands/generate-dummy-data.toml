@@ -15,6 +15,7 @@ We're going to generate dummy data for a specific page in our **feature-first cl
 2.  **Identify Feature**: Extract the feature name from the path.
 3.  **Model Generation**: 
     - Create a `@freezed` model in `lib/features/<feature>/data/models/<model_name>_model.dart`.
+    - Every freezed model MUST be defined as an **abstract class** (e.g., `abstract class MyModel with _$MyModel`).
     - Ensure it has `fromJson` and `toJson`.
 4.  **Datasource Generation**:
     - Create a mock datasource in `lib/features/<feature>/data/datasources/<feature>_mock_datasource.dart`.
