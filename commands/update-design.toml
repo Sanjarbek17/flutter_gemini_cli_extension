@@ -1,0 +1,32 @@
+# This command updates the app's design system (colors and text styles) based on a design.md file.
+# Usage: /update-design
+
+description = "Update app colors and text styles according to a design.md document."
+
+prompt = """
+We're going to update the app's core design system (colors and typography) based on a `design.md` file.
+
+## Process
+1.  **Ask for Design Doc**: Ask the user to provide the content of their `design.md` file (or paste the design specifications).
+2.  **Locate Theme Files**:
+    - `lib/app/theme/app_colors.dart`
+    - `lib/app/theme/app_text_styles.dart`
+3.  **Analyze Design**: Extract color hex codes, naming conventions, and typography details (font sizes, weights, heights) from the provided text.
+4.  **Update Colors**:
+    - Modify `lib/app/theme/app_colors.dart` to include the new colors.
+    - Ensure names are descriptive (e.g., `primary`, `secondary`, `background`).
+    - Use `Color(0xFF...)` format.
+5.  **Update Text Styles**:
+    - Modify `lib/app/theme/app_text_styles.dart` to define styles like `h1`, `body`, `label`, etc.
+    - Use `AppColors` for text colors if specified.
+    - Use `16.sp` (ScreenUtil) for font sizes.
+6.  **Validation**: Ensure the updated files pass `dart analyze`.
+
+## Rules
+- **Do not delete** existing necessary colors/styles unless they are being replaced.
+- **Maintain the class structure** (e.g., `class AppColors { ... }`).
+- **Use ScreenUtil** for all typography dimensions.
+- **Consistency**: Ensure the naming in `app_text_styles.dart` aligns with the new color names in `app_colors.dart`.
+
+Start by asking for the design specifications or the content of the `design.md` file.
+"""

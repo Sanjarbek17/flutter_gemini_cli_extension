@@ -76,6 +76,7 @@ The new commands will be available in new Gemini CLI sessions. The following com
 - `/create-app` - Guides you through bootstrapping a new Flutter project with best practices.
 - `/create-package` - Guides you through bootstrapping a new Dart package with best practices.
 - `/modify` - Manages a structured modification session with automated planning.
+- `/init-structure` - Generates a feature-first clean architecture folder structure for an app idea.
 - `/commit` - Automates pre-commit checks and generates a descriptive commit message.
 
 ## 💡 Usage
@@ -95,6 +96,24 @@ Initiates a guided process to bootstrap a new Flutter application, ensuring your
 
 ```bash
 /create-app I want to create a trip planning app
+```
+
+### `/init-structure`
+
+Generates a complete Flutter project folder structure based on an app idea, using a **feature-first clean architecture WITHOUT a domain layer**. It is opinionated and uses **Riverpod**, **Dio/Retrofit**, **Freezed**, and **GoRouter** by default.
+
+**Process:**
+
+1.  Asks for your app idea and extracts main features/modules.
+2.  Checks for existing project files to ensure idempotency (skips what already exists).
+3.  Creates a new Flutter project if needed and updates `pubspec.yaml` with the full tech stack.
+4.  Generates `app/` and `core/` directories with full working boilerplate code.
+5.  Scaffolds `features/` directories with **empty placeholder files** for your implementation.
+6.  Sets up localization (English and Uzbek) and the main entry point.
+
+
+```bash
+/init-structure I want to build a fitness tracking app with calorie counters, workout plans, and social sharing.
 ```
 
 ### `/modify`
