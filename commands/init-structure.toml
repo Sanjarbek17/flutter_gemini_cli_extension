@@ -1,0 +1,212 @@
+# This command will be invoked via: /init-structure (or /flutter:init-structure in the case of collisions)
+
+description = "Generate a feature-first clean architecture folder structure (Riverpod, no domain layer) for a Flutter app idea."
+
+prompt = """
+We're going to generate a complete Flutter project folder structure based on an app idea, using a **feature-first clean architecture WITHOUT a domain layer**.
+
+## Tech Stack (DO NOT ASK — these are always used)
+
+- **State Management**: flutter_riverpod + riverpod_annotation + riverpod_generator
+- **Networking**: dio + retrofit + retrofit_generator
+- **Routing**: go_router
+- **Local Storage**: shared_preferences + hive + hive_flutter
+- **DI / Code Gen**: build_runner, freezed + freezed_annotation + json_annotation + json_serializable
+- **Utilities**: intl, gap, flutter_screenutil, cached_network_image
+- **Linting**: flutter_lints
+
+These packages are always included. Do NOT ask the user which packages to use.
+
+## Problem specification
+
+Ask the user ONLY ONE question: **"What is your app idea? Describe the main features/screens."**
+
+That's it. From their answer:
+1. Extract the list of features/modules (e.g., auth, home, profile, settings, onboarding, etc.)
+2. Derive a valid Dart package name from the app idea
+3. Summarize the features you identified and present them to the user for confirmation
+4. Ask where to create the project (suggest a reasonable directory)
+
+Do NOT ask about branching, state management, packages, or anything else. Keep it to 2-3 questions maximum.
+
+## Architecture
+
+The architecture follows a **feature-first clean architecture WITHOUT a domain layer**:
+
+```
+lib/
+├── app/
+│   ├── app.dart                  # Root MaterialApp with ProviderScope
+│   ├── router.dart               # GoRouter configuration
+│   └── theme/
+│       ├── app_theme.dart        # ThemeData (light + dark)
+│       ├── app_colors.dart       # Color constants
+│       └── app_text_styles.dart  # Text style constants
+│
+├── core/
+│   ├── constants/
+│   │   ├── api_constants.dart    # Base URL, endpoints
+│   │   └── app_constants.dart    # App-wide constants
+│   ├── errors/
+│   │   ├── exceptions.dart       # Custom exceptions
+│   │   └── failures.dart         # Failure classes
+│   ├── network/
+│   │   └── dio_client.dart       # Dio instance + interceptors
+│   ├── storage/
+│   │   └── local_storage.dart    # SharedPreferences / Hive wrapper
+│   ├── providers/
+│   │   └── core_providers.dart   # Dio, SharedPreferences providers
+│   ├── utils/
+│   │   ├── extensions.dart       # Dart/Flutter extensions
+│   │   ├── validators.dart       # Input validators
+│   │   └── helpers.dart          # Helper functions
+│   └── widgets/
+│       ├── app_button.dart
+│       ├── app_text_field.dart
+│       ├── loading_indicator.dart
+│       └── error_widget.dart
+│
+├── features/
+│   └── <feature_name>/
+│       ├── data/
+│       │   ├── datasources/
+│       │   │   ├── <feature>_remote_datasource.dart   # Retrofit abstract class
+│       │   │   └── <feature>_local_datasource.dart
+│       │   ├── models/
+│       │   │   └── <feature>_model.dart               # Freezed model with fromJson
+│       │   └── repositories/
+│       │       └── <feature>_repository.dart           # Concrete repository
+│       └── presentation/
+│           ├── providers/
+│           │   └── <feature>_provider.dart             # Riverpod providers (@riverpod)
+│           ├── pages/
+│           │   └── <feature>_page.dart                 # ConsumerWidget page
+│           └── widgets/
+│               └── <feature>_widget.dart
+│
+├── l10n/
+│   ├── app_en.arb
+│   └── app_uz.arb
+│
+└── main.dart                    # Entry point with ProviderScope
+```
+
+**Key rules:**
+- **No domain layer** — models in `data/models/`, concrete repositories, no use cases.
+- **Feature-first** — each feature is self-contained.
+- **Riverpod everywhere** — providers in `presentation/providers/`, core providers in `core/providers/`.
+- **Freezed models** — all models use `@freezed` with `fromJson`/`toJson`.
+- **Retrofit datasources** — remote datasources are Retrofit abstract classes.
+
+## Generation Rules
+
+**CRITICAL DISTINCTION between core files and feature files:**
+
+### Core & App files → ALWAYS generate with FULL boilerplate code (same every time)
+
+The `app/`, `core/`, `l10n/`, and `main.dart` files are **always identical** regardless of the app idea. They must contain complete, working Dart code:
+
+- `main.dart` — full entry point with `ProviderScope`
+- `app/app.dart` — full `MaterialApp.router` wrapped in `ProviderScope` with theme support
+- `app/router.dart` — `GoRouter` setup with routes for each feature (only the routes change per app)
+- `app/theme/app_theme.dart` — complete `ThemeData` for light + dark mode
+- `app/theme/app_colors.dart` — full color constants class
+- `app/theme/app_text_styles.dart` — full text style constants
+- `core/constants/api_constants.dart` — full class with `baseUrl` placeholder
+- `core/constants/app_constants.dart` — full class with common constants
+- `core/errors/exceptions.dart` — full `ServerException`, `CacheException` classes
+- `core/errors/failures.dart` — full `Failure` sealed class
+- `core/network/dio_client.dart` — full Dio setup with interceptors (logging, error handling)
+- `core/storage/local_storage.dart` — full SharedPreferences wrapper
+- `core/providers/core_providers.dart` — full Riverpod providers for Dio, SharedPreferences
+- `core/utils/extensions.dart` — common extensions (context, string, etc.)
+- `core/utils/validators.dart` — email, password, phone validators
+- `core/utils/helpers.dart` — common helper functions
+- `core/widgets/app_button.dart` — reusable button widget
+- `core/widgets/app_text_field.dart` — reusable text field widget
+- `core/widgets/loading_indicator.dart` — loading spinner widget
+- `core/widgets/error_widget.dart` — error display widget
+- `l10n/app_en.arb` — English strings with basic keys (appName, etc.)
+- `l10n/app_uz.arb` — Uzbek strings with same keys
+
+### Feature files → ONLY create folder structure with EMPTY .dart files
+
+For each feature, **ONLY create the directories and empty `.dart` files**. Do NOT write any code inside feature files. Just create the empty files so the folder structure is ready:
+
+```
+features/<feature_name>/
+├── data/
+│   ├── datasources/
+│   │   ├── <feature>_remote_datasource.dart   (empty file)
+│   │   └── <feature>_local_datasource.dart    (empty file)
+│   ├── models/
+│   │   └── <feature>_model.dart               (empty file)
+│   └── repositories/
+│       └── <feature>_repository.dart          (empty file)
+└── presentation/
+    ├── providers/
+    │   └── <feature>_provider.dart            (empty file)
+    ├── pages/
+    │   └── <feature>_page.dart                (empty file)
+    └── widgets/
+        └── <feature>_widget.dart              (empty file)
+```
+
+The user will fill in the feature code themselves later. Your job is ONLY to scaffold the folder structure with empty files.
+
+## IDEMPOTENCY — CHECK BEFORE ACTING
+
+**CRITICAL: Before executing ANY step, check if it has already been done. Do NOT blindly redo work.**
+
+Before starting, scan the target directory to understand what already exists:
+- Does `pubspec.yaml` already exist? → The Flutter project is already created, skip project creation.
+- Does `lib/` already exist? → Check which files/folders inside it already exist.
+- Does `lib/core/` already exist? → Skip generating core files that are already present.
+- Does `lib/app/` already exist? → Skip generating app files that are already present.
+- Does a `features/<name>/` folder already exist? → Skip that feature's scaffolding.
+- Are the required packages already in `pubspec.yaml`? → Only add the missing ones.
+- Is `main.dart` already populated? → Skip it.
+
+**Rule: Only create files and folders that do NOT already exist. Only add packages that are NOT already in pubspec.yaml. Never overwrite existing files.**
+
+## Steps
+
+After user confirms features:
+
+1. **Check if Flutter project exists** — look for `pubspec.yaml` in the target directory.
+   - If it does NOT exist → create the Flutter project using the create_project tool with the `empty` flag.
+   - If it DOES exist → skip creation, inform the user that the project already exists.
+
+2. **Check `pubspec.yaml` for missing packages** — read the current `pubspec.yaml` and compare against the Tech Stack list.
+   - Only ADD packages that are missing. Do not duplicate or overwrite existing ones.
+   - Update version to `0.1.0` only if it is still `1.0.0+1` (default).
+
+3. **Generate `app/` and `core/` files** — but ONLY files that do not already exist.
+   - For each file in the core/app structure, check if it exists first.
+   - If it exists → skip it.
+   - If it does not exist → create it with full boilerplate.
+
+4. **Generate `features/` folders** — but ONLY for features whose folders do not already exist.
+   - If `features/<name>/` already exists → skip that feature entirely.
+   - If it does not exist → create the folder structure with EMPTY `.dart` files.
+
+5. **Generate `l10n/`** ARB files — only if they do not already exist.
+
+6. **Generate `main.dart`** — only if it is still the default Flutter boilerplate or does not exist.
+
+7. **Run pub get** to install all dependencies.
+
+8. **Run checks:**
+   - Run the dart_fix tool.
+   - Run the analyze_files tool and fix any issues.
+   - Run dart_format for formatting.
+
+9. **Commit** the initial structure with message: `feat: initialize <app_name> with feature-first clean architecture`.
+
+10. **Present a summary** showing:
+    - What was created (new files/folders).
+    - What was skipped (already existed).
+    - Next steps.
+
+**IMPORTANT**: Core/app files must contain valid Dart code that passes `dart analyze`. Feature files must be completely EMPTY (0 lines of code). Never overwrite existing files.
+"""
