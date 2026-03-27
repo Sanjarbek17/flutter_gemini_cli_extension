@@ -5,49 +5,49 @@ description = "Generate real data, models, and providers for a specific Flutter 
 
 args = [
   { name = "page_path", description = "The path to the Flutter page file (e.g., lib/features/home/presentation/pages/home_page.dart)." },
-  { name = "endpoint", description = "The API endpoint URL." },
-  { name = "params", description = "The parameters accepted by the endpoint (JSON format)." },
-  { name = "response", description = "An example response from the endpoint (JSON format)." }
+  { name = "openapi_json_path", description = "The path to the openapi.json file." }
 ]
 
 prompt = """
-We're going to transition from dummy/mock data to **real API data** for a specific page.
+We're going to transition from dummy/mock data to **real API data** for a specific page using an **OpenAPI (Swagger) specification**.
 **Assumption**: The `/generate-dummy-data` command has already been run, so a basic feature structure (models, mock datasources, repositories, and providers) should already exist.
 
 ## Process
-1.  **Analyze Existing Structure**: 
+1.  **Analyze existing structure & OpenAPI specification**: 
     - Read `page_path` and identify the feature name.
-    - Locate existing files in `lib/features/<feature>/`:
-        - `data/models/*_model.dart`
-        - `data/datasources/*_mock_datasource.dart`
-        - `data/repositories/*_repository.dart`
-        - `presentation/providers/*_provider.dart`
+    - Locate existing files in `lib/features/<feature>/`.
+    - Explore `openapi_json_path`. Analyze the JSON to find the paths, methods, and schemas relevant to this specific feature.
+    - Extract:
+        - `operationId` or path names for method naming.
+        - Request/Response schemas for model generation.
+        - Parameters (Query, Path, Body).
 2.  **Compare Models & Suggest Mappings**: 
-    - Compare the provided `response` (backend) with the existing frontend model and the data needs of the page.
+    - For each endpoint identified, compare the OpenAPI schema with the existing frontend models.
     - If there are naming differences (e.g., backend uses `user_id` but frontend uses `id`), **STOP and ask the user for clarification**.
     - **Suggestion**: Propose similar field names for mapping (e.g., "The backend returns 'user_name', should this map to 'name' in our existing model?").
     - **Wait for user input before proceeding**.
-3.  **Model Update**: 
-    - Update the existing `@freezed` model to handle the real API response.
+3.  **Model Update (Freezed)**: 
+    - Update or create `@freezed` models in `lib/features/<feature>/data/models/` to handle the real API responses based on the OpenAPI schemas.
     - **Crucial**: Every freezed model MUST be defined as an **abstract class** (e.g., `abstract class MyModel with _$MyModel`).
     - Use `@JsonKey(name: 'backend_field_name')` to map backend fields to the existing frontend property names.
     - Ensure `fromJson` and `toJson` are correctly implemented.
-4.  **Real Datasource Generation**:
-    - Create a **real Dio datasource** in `lib/features/<feature>/data/datasources/<feature>_datasource.dart`.
-    - Implement the request to `endpoint` using the provided `params`.
-    - Use the project's standard Dio client (usually provided via a provider or a singleton).
+4.  **Real Datasource Generation (Retrofit)**:
+    - Create or update the **real Retrofit datasource** in `lib/features/<feature>/data/datasources/<feature>_remote_datasource.dart`.
+    - Implement the endpoints found in the OpenAPI spec.
+    - Use the project's standard `Dio` instance (usually provided via a provider).
 5.  **Repository Update**:
-    - Update the existing repository in `lib/features/<feature>/data/repositories/<feature>_repository.dart`.
-    - Switch from using the `mock_datasource` to the new `real_datasource`.
+    - Update the repository in `lib/features/<feature>/data/repositories/<feature>_repository.dart`.
+    - Switch from using the `mock_datasource` to the new `remote_datasource`.
     - Ensure the repository methods return the same data types to avoid breaking the presentation layer.
 6.  **Provider & Page Verification**:
-    - Check the existing Riverpod provider. Ensure it still works with the updated repository.
+    - Check the existing Riverpod providers in `presentation/providers/`. Ensure they still work with the updated repository.
     - Verify the page at `page_path` correctly handles the data flow from the real API (including loading and error states which should already be there if the dummy command was run correctly).
 
 ## Rules
 - **Prefer Updates**: Always try to update existing models and repositories instead of creating duplicates.
 - Use `freezed` and `json_serializable` for models. Ensure models are **abstract classes**.
 - Use `riverpod_generator` for providers.
+- Use `retrofit` for remote datasources as abstract classes.
 - Use `Dio` for network requests.
 - **Communication**: Always ask before making assumptions about model differences. Offer mapping suggestions.
 - Follow the project's design system and relative import conventions.
@@ -68,5 +68,5 @@ lib/
             ├── pages/
             └── widgets/
 
-Start by analyzing the existing feature structure and comparing the API response with the current model.
+Start by analyzing the existing feature structure and reading the openapi.json file at the provided path.
 """
