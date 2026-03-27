@@ -1,0 +1,69 @@
+# This command connects UI elements to real API actions.
+# Usage: /connect-api-ui
+
+description = "Connect Flutter UI elements (buttons, forms) to real API actions using Riverpod providers."
+
+args = [
+  { name = "page_path", description = "The path to the Flutter page file (e.g., lib/features/home/presentation/pages/home_page.dart)." }
+]
+
+prompt = """
+We're going to connect the **UI elements** (buttons, forms, interactive widgets) on a specific page to **real API actions** using Riverpod.
+**Assumption**: The `/generate-api-data` command has already been run, so the `remote_datasource`, `repository`, and `models` for the API are already implemented.
+
+## Process
+1.  **Analyze existing Data Layer**:
+    - Locate existing files in `lib/features/<feature>/data/`:
+        - `datasources/<feature>_remote_datasource.dart` (Retrofit)
+        - `repositories/<feature>_repository.dart`
+    - Identify the available API methods (e.g., `listDevices`, `registerDevice`, `updateDevice`, `deleteDevice`).
+    - Note the required parameters and return types for each method.
+2.  **Analyze the UI**: 
+    - Read `page_path` and identify interactive elements:
+        - Buttons (e.g., "Add", "Save", "Delete", "Submit").
+        - TextFields and Forms (e.g., login form, registration inputs).
+        - Dropdowns or Toggle switches.
+    - Identify the current state management (Riverpod providers) used by the page.
+3.  **Map UI actions to Data Methods**: 
+    - Match each UI action to a corresponding method in the repository:
+        - A "Delete" button should call the `delete...` method.
+        - A "Save" button should call the `create...` or `update...` method.
+        - A "List" or "Refresh" action should call the `list...` or `get...` method.
+4.  **Update Provider**: 
+    - Update the Riverpod provider in `lib/features/<feature>/presentation/providers/<feature>_provider.dart`.
+    - **Add Action Methods**: Implement methods for each UI action identified in step 3 (e.g., `Future<void> deleteX(int id)`).
+    - These methods MUST call the corresponding methods in the existing `repository`.
+    - Handle state updates after the action (e.g., `ref.invalidateSelf()` to refresh a list after a successful delete).
+5.  **Update UI (The "Magic" part)**: 
+    - Modify the Flutter code at `page_path`:
+        - **Connect Buttons**: Set `onPressed` or `onTap` to call the provider methods.
+        - **Loading States**: Show a loading indicator (e.g., `CircularProgressIndicator`) or disable the button while the API call is in progress.
+        - **Feedback**: After a successful or failed action, show user feedback (e.g., `ScaffoldMessenger.of(context).showSnackBar(...)` or a Dialog).
+        - **Form Handling**: Ensure `TextField` values are correctly passed to the provider actions.
+6.  **Clean up**:
+    - Ensure all imports (relative) are correct.
+    - Remove any remaining mock/dummy logic related to these actions.
+
+## Rules
+- **Riverpod Only**: Use `ref.read(provider.notifier).method()` for actions.
+- **Async Handling**: Always handle the `Future` returned by provider actions correctly in the UI.
+- **Error Handling**: Implement basic error catching and display generic error messages to the user.
+- **Consistency**: Use the project's existing UI components (e.g., `AppButton`, `AppTextField`) if they are available in `core/widgets/`.
+- Use `ScreenUtil` for any new UI dimensions.
+
+## Context
+Project Structure:
+lib/
+├── core/
+│   └── widgets/        # Check here for AppButton, etc.
+└── features/
+    └── <feature_name>/
+        ├── data/
+        │   ├── models/
+        │   └── repositories/
+        └── presentation/
+            ├── providers/
+            └── pages/
+
+Start by analyzing the existing data layer and the UI at `page_path` to find matches.
+"""
