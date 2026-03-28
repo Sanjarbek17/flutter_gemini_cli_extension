@@ -33,7 +33,25 @@ We're going to transition from dummy/mock data to **real API data** for a specif
     - Ensure `fromJson` and `toJson` are correctly implemented.
 4.  **Real Datasource Generation (Retrofit)**:
     - Create or update the **real Retrofit datasource** in `lib/features/<feature>/data/datasources/<feature>_remote_datasource.dart`.
-    - Implement the endpoints found in the OpenAPI spec.
+    - **Follow this Template**:
+      ```dart
+      @RestApi()
+      abstract class <Feature>RemoteDatasource {
+        factory <Feature>RemoteDatasource(Dio dio, {String baseUrl}) = _<Feature>RemoteDatasource;
+
+        @GET('/endpoint')
+        Future<List<Model>> getItems();
+
+        @POST('/endpoint')
+        Future<Model> createItem(@Body() Map<String, dynamic> body);
+
+        @PATCH('/endpoint/{id}')
+        Future<Model> updateItem(@Path('id') int id, @Body() Map<String, dynamic> body);
+
+        @DELETE('/endpoint/{id}')
+        Future<void> deleteItem(@Path('id') int id);
+      }
+      ```
     - Use the project's standard `Dio` instance (usually provided via a provider).
 5.  **Repository Update**:
     - Update the repository in `lib/features/<feature>/data/repositories/<feature>_repository.dart`.
@@ -41,7 +59,12 @@ We're going to transition from dummy/mock data to **real API data** for a specif
     - Ensure the repository methods return the same data types to avoid breaking the presentation layer.
 6.  **Provider & Page Verification**:
     - Check the existing Riverpod providers in `presentation/providers/`. Ensure they still work with the updated repository.
-    - Verify the page at `page_path` correctly handles the data flow from the real API (including loading and error states which should already be there if the dummy command was run correctly).
+    - Verify the page at `page_path` correctly handles the data flow from the real API (including loading and error states).
+7.  **Scaffold Missing UI Actions**:
+    - If the OpenAPI specification defines actions (e.g., POST for creating, PUT for updating) that are not yet represented by interactive elements on the page:
+        - **Propose UI additions**: Suggest adding buttons or menu items for these missing actions.
+        - **Generate UI**: Upon confirmation, generate simple UI components (e.g., an `IconButton` or `AppButton`) that trigger these actions.
+        - **Dialogs/Forms**: For actions requiring input (like "Create"), generate a simple `showDialog` containing a form with the necessary `AppTextField` widgets based on the OpenAPI schema.
 
 ## Rules
 - **Prefer Updates**: Always try to update existing models and repositories instead of creating duplicates.
