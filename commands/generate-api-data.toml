@@ -21,7 +21,9 @@ We're going to transition from dummy/mock data to **real API data** for a specif
         - `operationId` or path names for method naming.
         - Request/Response schemas for model generation.
         - Parameters (Query, Path, Body).
-2.  **Compare Models & Suggest Mappings**: 
+2.  **Compare Endpoints & Models**: 
+    - **Missing in OpenAPI**: If the existing frontend mock datasource or UI uses an action/endpoint that does **NOT** exist in the `openapi.json`, **STOP and tell the user** so they can create it in the backend.
+    - **Missing in UI**: If the `openapi.json` contains endpoints for this feature that do **NOT** exist in the UI or mock datasource, **tell the user** about it so you or they can create the corresponding UI.
     - For each endpoint identified, compare the OpenAPI schema with the existing frontend models.
     - If there are naming differences (e.g., backend uses `user_id` but frontend uses `id`), **STOP and ask the user for clarification**.
     - **Suggestion**: Propose similar field names for mapping (e.g., "The backend returns 'user_name', should this map to 'name' in our existing model?").
@@ -53,9 +55,10 @@ We're going to transition from dummy/mock data to **real API data** for a specif
       }
       ```
     - Use the project's standard `Dio` instance (usually provided via a provider).
-5.  **Repository Update**:
+5.  **Repository Update & Mock Deletion**:
     - Update the repository in `lib/features/<feature>/data/repositories/<feature>_repository.dart`.
-    - Switch from using the `mock_datasource` to the new `remote_datasource`.
+    - Switch fully from using the `mock_datasource` to the new `remote_datasource`.
+    - **DELETE the old mock datasource file entirely**. The feature MUST transition fully to the remote data source.
     - Ensure the repository methods return the same data types to avoid breaking the presentation layer.
 6.  **Provider & Page Verification**:
     - Check the existing Riverpod providers in `presentation/providers/`. Ensure they still work with the updated repository.
