@@ -18,9 +18,12 @@ We're going to convert HTML code into a Flutter component within our **feature-f
 4.  **Validation**: Once the user selects, confirm the path by asking: **"You've selected <path_to_file>. Is this it?"**
 5.  **Input Source**: Check if `html_path` was provided as an argument. If not, ask the user for the **HTML code snippet** OR for a **file path** to an HTML file they want to convert.
 6.  **Query**: Check if `query` was provided as an argument. If not, also ask for any **additional instructions or a query** (e.g., specific widget names, layout preferences, "extract buttons", or any custom design decisions) to refine the conversion.
+7.  **Filtration**: Before starting the conversion, analyze the HTML and identify layout elements (top bars, sidebars, headers, navs) that should be excluded as per the **Conversion Rules**.
+
 
 ## Conversion Rules
 - Convert the HTML to a Flutter `ConsumerWidget` (Riverpod).
+- **Exclude Layout Elements**: Automatically identify and exclude layout components like top bars and sidebars (e.g., `<header>`, `<nav>`, `<aside>`, or divs with IDs like `header`, `sidebar`, `navbar`) if they exist in the HTML. These are already handled globally in `lib/app/router.dart`. Focus the conversion on the core content of the page or widget.
 - **Apply Query**: If the user provided specific instructions or a query, ensure the conversion strictly follows them (e.g., "Make the card rounded", "Use AppColors.primary for the header", etc.).
 - **Component Extraction**: For complex HTML, identify logical sections (e.g., a custom card, a complex header, or a specialized list item) and extract them into separate widgets within the feature's `presentation/widgets/` directory.
 - Use `flutter_screenutil` for all dimensions (e.g., `10.w`, `20.h`, `16.sp`).
