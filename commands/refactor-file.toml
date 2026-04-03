@@ -1,0 +1,45 @@
+# This command refactors a large Flutter file by extracting internal private widgets and helper methods into separate files.
+# Usage: /refactor-file
+
+description = "Refactor a large Flutter file by extracting private widgets and helper methods into separate, reusable files."
+
+args = [
+  { name = "file_path", description = "The path to the Flutter file you want to refactor (e.g., lib/features/home/presentation/widgets/some_widget.dart)." }
+]
+
+prompt = """
+We're going to refactor a large Flutter file to improve maintainability and reduce its overall context size.
+
+## Goal
+Extract internal private widgets and helper components into separate files while maintaining logical consistency and UI appearance.
+
+## Process
+1.  **Analyze the File**: 
+    - Read the file at `file_path`.
+    - **Identify Candidates**: List all private classes (`_WidgetName`) and complex helper methods (e.g., private methods that return a `Widget` or perform complex UI logic) that are candidates for extraction.
+2.  **Propose Plan**: 
+    - Propose a new directory structure (e.g., a sub-directory named after the file in `lib/features/<feature>/presentation/widgets/<file_name>/`) to house the extracted components.
+    - Present this plan to the user before making any changes.
+3.  **Extract & Rename**: 
+    - For each candidate, create a new file with a descriptive, public name (e.g., `_EmployeeCell` becomes `FeatureEmployeeCell` or `DashboardEmployeeCell`).
+    - Use the project's feature-first architecture for the new file locations.
+4.  **Clean up Original File**: 
+    - Update the original file to import and use the new components.
+    - Ensure the original file remains the main orchestrator/entry point for the feature/page.
+5.  **Maintain Logic & Theme**: 
+    - **Preserve Logic**: Ensure that all parameters, styles, and internal logic are preserved so the UI remains identical.
+    - **Theme Consistency**: Ensure all extracted widgets continue to use `AppColors` and `AppTextStyles` (or the project's designated theme system) instead of hardcoded values.
+6.  **Verification & Analysis**:
+    - **Run Analyze Tools**: Use the `analyze_files` tool (or `dart analyze`) to scan the original and all new files for errors or warnings.
+    - **Fix Lint Issues**: Use `dart_fix` to conform to analysis options.
+    - **Confirm Correctness**: Ensure there are no broken imports, missing parameters, or logical errors.
+    - **Formatting**: Run `dart_format` on all modified code.
+
+
+## Rules
+- **Encapsulation**: Extracted widgets should be self-contained but may receive necessary data via constructors.
+- **Naming**: Use PascalCase for new widget classes and snake_case for filenames.
+- **Imports**: Do NOT use relative paths for imports. Always use absolute package imports (e.g., `import 'package:your_project/...'`) for consistency and clarity.
+
+Start by analyzing the file and proposing a plan before making any changes.
+"""
