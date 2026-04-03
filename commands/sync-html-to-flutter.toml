@@ -1,0 +1,47 @@
+# This command synchronizes changes from an HTML file to an existing Flutter ConsumerWidget.
+# Usage: /sync-html-to-flutter
+
+description = "Synchronize changes from an HTML file to an existing Flutter component."
+
+args = [
+  { name = "html_path", description = "The path to the modified HTML file." },
+  { name = "flutter_path", description = "The path to the existing Flutter file to update." },
+  { name = "query", description = "Any additional instructions for the synchronization." }
+]
+
+prompt = """
+We're going to synchronize changes from an HTML file to an existing Flutter component within our **feature-first clean architecture**.
+
+## Process
+1.  **Identify Files**: 
+    - Check if `flutter_path` is provided. If not, ask the user to identify the Flutter file (Page or Widget) that should be updated.
+    - **Metadata Check**: Once the Flutter file is identified, check its content for a `// Source HTML: <path>` comment. 
+    - If the comment exists, try to automatically read the HTML file from that path.
+    - If the comment doesn't exist or is invalid, or if `html_path` wasn't provided, ask the user to provide the path to the HTML file that was changed.
+2.  **Read Context**: 
+    - Read the content of the selected HTML file.
+    - Read the content of the target Flutter file.
+3.  **Analyze Changes**: 
+    - Use `git diff <html_path>` to identify specific changes made to the HTML file.
+    - If there are no unstaged changes, use `git diff --cached <html_path>` to identify staged changes.
+    - **Note**: Only apply changes that appear in the git diff. If no changes are detected by git, inform the user that the HTML file is identical to the last commit.
+4.  **Update Strategy**: 
+    - If `query` was provided, prioritize those instructions (e.g., "Only update the form fields", "Change the button colors").
+    - **Preserve Logic**: Be careful not to delete any manual logic, Riverpod providers, or custom event handlers in the Dart file unless they are directly superseded by the HTML changes.
+    - **Follow Standards**: Ensure the updated Flutter code still follows the project's design system and architecture rules (ScreenUtil, Gap, AppColors, etc.).
+5.  **Confirmation**: Briefly explain the changes you are about to apply to the Flutter file and ask for confirmation.
+
+## Synchronization Rules
+- **Incremental Update**: Only update the parts of the Flutter widget that correspond to the changes in the HTML.
+- **Maintain Widget Structure**: Keep the `ConsumerWidget` structure and any existing imports.
+- **ScreenUtil**: Ensure any new dimensions use `flutter_screenutil` (e.g., `10.w`, `20.h`, `16.sp`).
+- **Design System**: Use `AppColors` and `AppTextStyles` for consistency.
+- **Gap**: Use `Gap` for new spacing.
+- **Images**: Use `CachedNetworkImage` for new network images.
+
+## File Update
+- **Modify** the existing target file. Do not completely overwrite it if there is manual logic to preserve; instead, refactor the `build` method or relevant parts to reflect the HTML changes.
+- If new sub-components are needed (based on HTML complexity), extract them to the `presentation/widgets/` folder of the same feature.
+
+Start by asking for the file paths if they weren't provided as arguments.
+"""

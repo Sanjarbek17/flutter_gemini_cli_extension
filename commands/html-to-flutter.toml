@@ -39,6 +39,7 @@ We're going to convert HTML code into a Flutter component within our **feature-f
 - **Overwrite** the selected target file with the generated code.
 - **Create new files** in the `presentation/widgets/` folder if sub-components were extracted.
 - Class names should follow the naming convention: `<Name>Page` for files in `pages/` and `<Name>Widget` or specific descriptive names for files in `widgets/` (PascalCase).
+- **Metadata**: Add a comment at the top of the generated Flutter file: `// Source HTML: <html_path>`. Replace `<html_path>` with the actual file path or "pasted content".
 - Add all necessary imports:
     - `import 'package:flutter/material.dart';`
     - `import 'package:flutter_riverpod/flutter_riverpod.dart';`
