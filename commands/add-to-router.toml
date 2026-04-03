@@ -1,0 +1,46 @@
+# This command adds a new page to the GoRouter configuration in lib/app/router.dart.
+# Usage: /add-to-router
+
+description = "Add a new Flutter page to the GoRouter configuration, including navigation shell support."
+
+args = [
+  { name = "page_path", description = "The path to the new Flutter page file (e.g., lib/features/home/presentation/pages/home_page.dart)." }
+]
+
+prompt = """
+We're going to add a newly created Flutter page to the **GoRouter** configuration in `lib/app/router.dart`. 
+
+## Goal
+Automatically identify the page and feature, then insert a new route into the router, ensuring it is placed within the **navigation shell** (e.g., `StatefulShellRoute` or `ShellRoute`) if one exists.
+
+## Process
+1.  **Analyze the Page**:
+    - Read `page_path` to identify:
+        - **Feature Name**: (e.g., `dashboard` from `lib/features/dashboard/...`)
+        - **Page Class Name**: (e.g., `DashboardPage`)
+    - Automatically derive a **Route Path** from the feature name (e.g., `/dashboard`).
+2.  **Locate Router**: 
+    - Verify that `lib/app/router.dart` exists.
+3.  **Analyze Router Configuration**:
+    - Read `lib/app/router.dart` and identify its structure.
+    - **Check for Navigation Shell**: Look for `StatefulShellRoute`, `StatefulShellBranch`, or `ShellRoute`.
+    - Note where existing feature routes are defined.
+4.  **Update Router**:
+    - **Add Import**: Add the relative import for the new page at the top of `lib/app/router.dart`.
+    - **Insert Route**: 
+        - If a **StatefulShellRoute** exists, add the new page as a new `StatefulShellBranch` or under an existing branch as a sub-route.
+        - If a **ShellRoute** exists, add the new page to its `routes` list.
+        - If no shell is found, add it as a top-level `GoRoute` in the main `routes` list.
+    - Use the generated **Route Path** (e.g., `/dashboard`) and **Page Class** (e.g., `DashboardPage()`).
+5.  **Refactor/Clean up**:
+    - Ensure logical ordering for imports and routes.
+    - Run `dart_format` on `lib/app/router.dart`.
+
+## Rules
+- **Automatic Generation**: Always derive the route path from the feature/page name.
+- **GoRouter Patterns**: Ensure compatibility with `go_router` patterns (e.g., `builder`, `pageBuilder`, or `TypedGoRoute`).
+- **Navigation Shell Priority**: If a shell exists, assume the new page should be part of it (typically as a primary screen).
+- **Architecture**: Adhere to the feature-first architecture (importing from `features/...`).
+
+Start by analyzing the provided `page_path` and the `lib/app/router.dart` file.
+"""
