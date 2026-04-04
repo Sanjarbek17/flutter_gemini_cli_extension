@@ -1,0 +1,70 @@
+# This command localizes hardcoded strings in a Flutter page and its related widgets.
+# Usage: /localize <page_path>
+
+description = "Localize a given Flutter page and its widgets, ensuring localization setup exists or creating it if requested."
+
+args = [
+  { name = "page_path", description = "The path to the Flutter page file (e.g., lib/features/home/presentation/pages/home_page.dart)." }
+]
+
+prompt = """
+We're going to localize the hardcoded strings in a Flutter page and its associated widgets.
+
+## Goal
+Identify all user-facing hardcoded strings, move them to `.arb` files, and update the code to use localization keys.
+
+## Process
+
+1.  **Check for Localization Setup**:
+    -   Verify if `l10n.yaml` exists in the project root.
+    -   Verify if `lib/l10n/app_en.arb` exists.
+    -   Check `pubspec.yaml` for `flutter_localizations` dependency and `generate: true`.
+
+2.  **Ask to Initialize (if missing)**:
+    -   If setup is missing, ask: *"Localization is not set up. Would you like me to initialize it for you? (Using standard Flutter `intl` setup)"*.
+    -   If approved:
+        -   Add `flutter_localizations` and `intl` to `pubspec.yaml` using the `pub` tool.
+        -   Create `l10n.yaml` in the root:
+            ```yaml
+            arb-dir: lib/l10n
+            template-arb-file: app_en.arb
+            output-localization-file: app_localizations.dart
+            ```
+        -   Create `lib/l10n/app_en.arb` and `lib/l10n/app_uz.arb` with basic keys (e.g., `appName`).
+        -   Set `generate: true` under `flutter:` in `pubspec.yaml`.
+        -   Run `flutter pub get`.
+
+3.  **Analyze the Page**:
+    -   Read the file at `page_path`.
+    -   Identify all hardcoded strings (e.g., in `Text()` widgets, `hintText`, `label`, error messages).
+    -   **Ignore**: Imports, keys, identifiers, log messages, and non-user-facing strings.
+
+4.  **Extract Strings**:
+    -   **Generate Keys**: For each unique string, generate a concise `snake_case` key.
+    -   **Namespace Keys**: Use the feature or page name as a prefix to avoid collisions (e.g., `home_welcomeMessage`).
+    -   **Update ARB**: Add the keys and values to `lib/l10n/app_en.arb`.
+    -   **Uzbek Support**: If `lib/l10n/app_uz.arb` exists, add the same keys with empty strings or machine-translated placeholders.
+
+5.  **Update the Code**:
+    -   **Import**: Add `import 'package:flutter_gen/gen_l10n/app_localizations.dart';` (or the equivalent generated path).
+    -   **Replace Strings**: Replace hardcoded strings with:
+        -   `context.l10n.<key>` (if `context.l10n` extension exists in `lib/core/utils/extensions.dart`).
+        -   `AppLocalizations.of(context)!.<key>` (otherwise).
+    -   **Check for Extension**: Before replacing, check `lib/core/utils/extensions.dart` for a `BuildContext` extension called `l10n`.
+
+6.  **Handle Associated Widgets**:
+    -   Check for associated widgets in the same directory or in `../widgets/` relative to the page.
+    -   Apply the same localization process to any related widgets used by the page.
+
+7.  **Cleanup & Finalize**:
+    -   Run `flutter pub get`.
+    -   Run `dart_format` on modified files.
+    -   Commit changes with message: `feat: localize <page_name> and related widgets`.
+
+## Rules
+- **Non-Destructive**: Never overwrite existing keys in `.arb` files.
+- **Accuracy**: Only extract strings that are truly user-facing.
+- **Architecture**: Maintain the project's folder structure and coding patterns.
+
+Start by checking the localization setup and the provided `page_path`.
+"""

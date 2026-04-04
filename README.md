@@ -77,6 +77,7 @@ The new commands will be available in new Gemini CLI sessions. The following com
 - `/create-package` - Guides you through bootstrapping a new Dart package with best practices.
 - `/modify` - Manages a structured modification session with automated planning.
 - `/init-structure` - Generates a feature-first clean architecture folder structure for an app idea.
+- `/localize` - Localizes hardcoded strings in a Flutter page and its related widgets.
 - `/commit` - Automates pre-commit checks and generates a descriptive commit message.
 
 ## 💡 Usage
