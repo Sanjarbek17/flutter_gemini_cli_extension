@@ -12,7 +12,7 @@ We're going to generate a complete Flutter project folder structure based on an 
 - **Routing**: go_router
 - **Local Storage**: shared_preferences + hive + hive_flutter
 - **DI / Code Gen**: build_runner, freezed + freezed_annotation + json_annotation + json_serializable
-- **Utilities**: intl, gap, flutter_screenutil, cached_network_image
+- **Utilities**: intl, gap, cached_network_image
 - **Linting**: flutter_lints
 
 These packages are always included. Do NOT ask the user which packages to use.

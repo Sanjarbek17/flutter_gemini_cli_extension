@@ -49,7 +49,7 @@ We're going to connect the **UI elements** (buttons, forms, interactive widgets)
 - **Async Handling**: Always handle the `Future` returned by provider actions correctly in the UI.
 - **Error Handling**: Implement basic error catching and display generic error messages to the user.
 - **Consistency**: Use the project's existing UI components (e.g., `AppButton`, `AppTextField`) if they are available in `core/widgets/`.
-- Use `ScreenUtil` for any new UI dimensions.
+- Use regular pixels for any new UI dimensions.
 
 ## Context
 Project Structure:

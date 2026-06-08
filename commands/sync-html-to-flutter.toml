@@ -28,13 +28,13 @@ We're going to synchronize changes from an HTML file to an existing Flutter comp
 4.  **Update Strategy**: 
     - If `query` was provided, prioritize those instructions (e.g., "Only update the form fields", "Change the button colors").
     - **Preserve Logic**: Be careful not to delete any manual logic, Riverpod providers, or custom event handlers in the Dart file unless they are directly superseded by the HTML changes.
-    - **Follow Standards**: Ensure the updated Flutter code still follows the project's design system and architecture rules (ScreenUtil, Gap, AppColors, etc.).
+    - **Follow Standards**: Ensure the updated Flutter code still follows the project's design system and architecture rules (Gap, AppColors, etc.).
 5.  **Confirmation**: Briefly explain the changes you are about to apply to the Flutter file and ask for confirmation.
 
 ## Synchronization Rules
 - **Incremental Update**: Only update the parts of the Flutter widget that correspond to the changes in the HTML.
 - **Maintain Widget Structure**: Keep the `ConsumerWidget` structure and any existing imports.
-- **ScreenUtil**: Ensure any new dimensions use `flutter_screenutil` (e.g., `10.w`, `20.h`, `16.sp`).
+- **Dimensions**: Use regular pixels for all new dimensions.
 - **Design System**: Use `AppColors` and `AppTextStyles` for consistency.
 - **Gap**: Use `Gap` for new spacing.
 - **Images**: Use `CachedNetworkImage` for new network images.

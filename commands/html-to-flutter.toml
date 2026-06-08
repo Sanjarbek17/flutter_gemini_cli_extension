@@ -26,7 +26,7 @@ We're going to convert HTML code into a Flutter component within our **feature-f
 - **Exclude Layout Elements**: Automatically identify and exclude layout components like top bars and sidebars (e.g., `<header>`, `<nav>`, `<aside>`, or divs with IDs like `header`, `sidebar`, `navbar`) if they exist in the HTML. These are already handled globally in `lib/app/router.dart`. Focus the conversion on the core content of the page or widget.
 - **Apply Query**: If the user provided specific instructions or a query, ensure the conversion strictly follows them (e.g., "Make the card rounded", "Use AppColors.primary for the header", etc.).
 - **Component Extraction**: For complex HTML, identify logical sections (e.g., a custom card, a complex header, or a specialized list item) and extract them into separate widgets within the feature's `presentation/widgets/` directory.
-- Use `flutter_screenutil` for all dimensions (e.g., `10.w`, `20.h`, `16.sp`).
+- Use regular pixels for all dimensions.
 - Follow the project's design system:
     - Colors: Use `AppColors` from `lib/app/theme/app_colors.dart`.
     - Text Styles: Use `AppTextStyles` from `lib/app/theme/app_text_styles.dart`.
@@ -43,7 +43,6 @@ We're going to convert HTML code into a Flutter component within our **feature-f
 - Add all necessary imports:
     - `import 'package:flutter/material.dart';`
     - `import 'package:flutter_riverpod/flutter_riverpod.dart';`
-    - `import 'package:flutter_screenutil/flutter_screenutil.dart';`
     - `import 'package:gap/gap.dart';`
     - `import 'package:cached_network_image/cached_network_image.dart';`
     - `import '../../../../app/theme/app_colors.dart';`
