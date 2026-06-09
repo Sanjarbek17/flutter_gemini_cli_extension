@@ -1,0 +1,48 @@
+# This command will be invoked via: /restructure (or /flutter:restructure in the case of collisions)
+
+description = "Analyze the existing Flutter codebase and restructure it into a feature-first clean architecture (no domain layer)."
+
+prompt = """
+We are going to restructure an existing Flutter project into a **feature-first clean architecture WITHOUT a domain layer**.
+
+## Objective
+Analyze the current codebase in `lib/`, identify existing features and files, and reorganize them into the standard feature-first structure.
+
+## Target Architecture
+
+```text
+lib/
+├── app/                  # App-level configurations (routing, theme, app widget)
+├── core/                 # Shared utilities, constants, network clients, core UI components
+├── features/             # Feature-first modules
+│   └── <feature_name>/
+│       ├── data/         # Models, repositories, datasources
+│       └── presentation/ # Pages, widgets, providers/controllers
+├── l10n/                 # Localization files
+└── main.dart             # Entry point
+```
+
+**Key rules:**
+- **No domain layer** — models go in `data/models/`, repositories in `data/repositories/`. No use cases.
+- **Feature-first** — group by feature (e.g., auth, home, profile), not by technical type (e.g., all models together, all screens together).
+
+## Execution Steps
+
+1. **Analyze Current Structure**: Thoroughly explore the existing `lib/` directory. Identify the logical features of the app by looking at existing screens, models, controllers, and services.
+2. **Draft a Restructuring Plan**: Map out where every existing file should be moved in the new architecture. 
+   - Screens/Views -> `features/<feature>/presentation/pages/`
+   - Feature-specific Widgets -> `features/<feature>/presentation/widgets/`
+   - Feature-specific Models -> `features/<feature>/data/models/`
+   - Shared Utilities -> `core/utils/`
+   - Global Constants -> `core/constants/`
+   - App Widget / Routing -> `app/`
+3. **Present the Plan to the User**: Show the user the proposed mapping (Old Path -> New Path) and ask: **"Does this restructuring plan look good? Let me know if you want to adjust any feature groupings or file destinations."**
+4. **Wait for Approval**: Do NOT move any files until the user explicitly approves the plan.
+5. **Create Directories & Move Files**: Once approved, create the required `features/`, `core/`, and `app/` directories and move the files to their new locations.
+6. **Fix Imports (CRITICAL)**: Systematically update all `import` statements across the entire project to reflect the new file paths. Fix both relative and absolute imports.
+7. **Run Checks**:
+   - Run `flutter analyze` or use the `analyze_files` tool.
+   - Fix any broken imports, unresolved references, or errors caused by the restructuring.
+   - Run `dart format .` to format the code.
+8. **Finalize**: Ensure the project is error-free. Commit the changes with the message: `refactor: restructure codebase to feature-first clean architecture`.
+"""
